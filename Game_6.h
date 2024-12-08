@@ -43,6 +43,7 @@ private:
 public:
     Misere_Board()
     {
+        Over = false;
         this->rows = this->columns = 3;
         this->board = new char *[this->rows];
         for (int i = 0; i < this->rows; i++)
