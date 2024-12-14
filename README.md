@@ -80,9 +80,7 @@ Players choose either "S" or "U" for all their moves.
 Turns alternate, placing one letter per turn.
 Winning: The player who creates the most "S-U-S" sequences wins.
 
-
-How to Use
-Prepare Materials: Use physical grids, draw boards on paper, or create digital versions of these games.
+Use physical grids, draw boards on paper, or create digital versions of these games.
 Setup Rules: Review rules and objectives before starting each variation.
 Play and Enjoy: Strategize, compete, and have fun exploring these creative twists on Tic-Tac-Toe!
 
