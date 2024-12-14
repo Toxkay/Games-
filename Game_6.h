@@ -1,7 +1,6 @@
 #pragma once
 #include "BoardGame_Classes.h"
 #include <bits\stdc++.h>
-#include "MinMaxPlayer.h"
 bool Over = false;
 template <typename T>
 class Misere_Board : public Board<T>
