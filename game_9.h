@@ -1,57 +1,47 @@
-#ifndef _BOARDGAME_CLASSES_H
-#define _BOARDGAME_CLASSES_H
+#pragma once
 
-#include <string>
-#include <iostream>
+#include "BoardGame_Classes.h"
+#include <bits/stdc++.h>
 using namespace std;
 
 template <typename T>
-class Board {
-protected:
-    int rows, columns;
-    T** board;
-    int n_moves = 0;
-
-public:
-    Board(int r, int c);
-    virtual bool update_board(int x, int y, T symbol);
-    virtual void display_board();
-    virtual bool is_win();
-    virtual bool is_draw();
-    virtual bool game_is_over();
-    virtual int checkSUS();
-};
-
-template <typename T>
-class Player {
-protected:
-    string name;
-    T symbol;
-    Board<T>* boardPtr;
-public:
-    Player(string n, T symbol);
-    Player(T symbol);
-    virtual void getmove(int& x, int& y);
-    T getsymbol();
-    string getname();
-    void setBoard(Board<T>* b);
-};
-
-template <typename T>
-class RandomPlayer : public Player<T> {
-public:
-    RandomPlayer(T symbol);
-    virtual void getmove(int& x, int& y);
-};
-
-template <typename T>
-class GameManager {
+class Ultimate_Board : public Board<T>
+{
 private:
-    Board<T>* boardPtr;
-    Player<T>* players[2];
+    vector<vector<T>> Boards;   
+    vector<bool> closed;        
+    bool is_valid_move(short x, short y);
+    bool FinalWin();
+    void AddWinner(int i, T symbol);
+    void InnerWin();
+    bool CheckBoardWin(vector<char>& b, T& s);
+
 public:
-    GameManager(Board<T>* bPtr, Player<T>* playerPtr[2]);
-    void run();
+    Ultimate_Board();
+    void display_board();
+    bool update_board(int x, int y, char symbol);
+    bool is_win();
+    bool is_draw();
+    bool game_is_over();
 };
 
-#endif 
+template <typename T>
+class Ultimate_Player : public Player<T>
+{
+private:
+    bool is_valid_input(string& input);
+    void get_valid_input(int& x, int& y);
+
+public:
+    Ultimate_Player(string name, T symbol);
+    Ultimate_Player(T symbol);
+    void getmove(int& x, int& y);
+};
+
+template <typename T>
+class Random_Ultimate_Player : public RandomPlayer<T>
+{
+public:
+    Random_Ultimate_Player(string name, T symbol);
+    void getmove(int& x, int& y);
+};
