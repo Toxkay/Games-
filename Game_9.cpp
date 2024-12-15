@@ -3,6 +3,7 @@
 #include "game_9.h"
 
 using namespace std;
+
 int get_pos_integer(const string& prompt) {
     string input;
     int value;
@@ -25,78 +26,39 @@ int get_pos_integer(const string& prompt) {
 }
 
 int main() {
-    
-    int n1 = 1, n2 = 2;
-    string name1, name2;
+    srand(static_cast<unsigned>(time(0)));
 
-    cout << "Enter Player " << n1 << " name: ";
-    getline(cin >> ws, name1);
+    string name1 = "Player 1", name2 = "Player 2"; 
 
-    cout << "Enter Player " << n2 << " name: ";
-    getline(cin >> ws, name2);
-
-    
-    int type1 = 0;
-    cout << "Choose Player " << n1 << " type:\n1. Human\n2. Random Computer\n";
-    type1 = get_pos_integer("Enter your choice: ");
-    while (type1 != 1 && type1 != 2) {
-        cout << "Enter a valid choice (1 or 2): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        type1 = get_pos_integer("Enter your choice: ");
-    }
-
-    int type2 = 0;
-    cout << "Choose Player " << n2 << " type:\n1. Human\n2. Random Computer\n";
-    type2 = get_pos_integer("Enter your choice: ");
-    while (type2 != 1 && type2 != 2) {
-        cout << "Enter a valid choice (1 or 2): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        type2 = get_pos_integer("Enter your choice: ");
-    }
-
-    cout << "Player 1 " << name1 << " is assigned 'S'" << endl;
-    cout << "Player 2 " << name2 << " is assigned 'U'" << endl;
-
+    char symbol1 = 'S', symbol2 = 'U'; 
     
     Player<char>* players[2];
-    vector<vector<char>> board(3, vector<char>(3, ' ')); 
-    int currentPlayer = 0; 
+    Ultimate_Board<char> board;
+    int currentPlayer = 0;
 
-    if (type1 == 1)
-        players[0] = new Ultimate_Player<char>(name1, 'S');
-    else
-        players[0] = new Random_Ultimate_Player<char>(name1, 'S');
+    players[0] = new Ultimate_Player<char>(name1, symbol1);
 
-    if (type2 == 1)
-        players[1] = new Ultimate_Player<char>(name2, 'U');
-    else
-        players[1] = new Random_Ultimate_Player<char>(name2, 'U');
+    players[1] = new Ultimate_Player<char>(name2, symbol2);
 
-    int turns = 0;
+    int playerScores[2] = {0, 0};
     bool game_over = false;
+
     while (!game_over) {
         cout << "\nCurrent board:" << endl;
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                cout << (board[i][j] == ' ' ? '-' : board[i][j]) << " ";
-            }
-            cout << endl;
-        }
+        board.display_board();
 
         int x, y;
-        cout << "Player " << (currentPlayer + 1) << " (" << (currentPlayer == 0 ? 'S' : 'U') << "), it's your turn." << endl;
-
-        
+        cout << "Player " << (currentPlayer + 1) << " (" << players[currentPlayer]->getSymbol() << "), it's your turn." << endl;
         players[currentPlayer]->getmove(x, y);
 
-        if (is_valid_move(x, y, board)) {
-            board[x][y] = (currentPlayer == 0) ? 'S' : 'U'; 
-            turns++;
+        if (board.update_board(x, y, players[currentPlayer]->getSymbol())) {
+            if (board.check_sus_sequence(players[currentPlayer]->getSymbol())) {
+                cout << "Player " << (currentPlayer + 1) << " scores a point for creating an S-U-S sequence!" << endl;
+                playerScores[currentPlayer]++;
+            }
 
-            if (check_sus_sequence(board, (currentPlayer == 0) ? 'S' : 'U')) {
-                cout << "Player " << (currentPlayer + 1) << " wins by creating a 'S-U-S' sequence!" << endl;
+            if (board.is_draw()) {
+                cout << "It's a draw! No more moves possible." << endl;
                 game_over = true;
             }
         } else {
@@ -104,15 +66,24 @@ int main() {
             continue;
         }
 
-        if (turns == 9) {
-            cout << "It's a draw!" << endl;
-            game_over = true;
-        }
-        
         currentPlayer = (currentPlayer + 1) % 2;
     }
 
-    
+    cout << "\nFinal board:" << endl;
+    board.display_board();
+
+    cout << "\nGame Over! Final Scores:" << endl;
+    cout << "Player 1: " << playerScores[0] << " points" << endl;
+    cout << "Player 2: " << playerScores[1] << " points" << endl;
+
+    if (playerScores[0] > playerScores[1]) {
+        cout << "Player 1 wins the game!" << endl;
+    } else if (playerScores[1] > playerScores[0]) {
+        cout << "Player 2 wins the game!" << endl;
+    } else {
+        cout << "The game is a tie!" << endl;
+    }
+
     for (int i = 0; i < 2; ++i) {
         delete players[i];
     }
