@@ -1,152 +1,82 @@
 #include "BoardGame_Classes.h"
-#include <cstdlib>
-#include <ctime>
+#include <bits/stdc++.h>
+#include "Game_5.h"
 
 using namespace std;
 
-const int SIZE = 3;
-const int WIN_SUM = 15;
+int get_pos_integer(const string& prompt) {
+    string input;
+    int value;
 
-template <typename T>
-Board<T>::Board(int r, int c) {
-    rows = r;
-    columns = c;
-    board = new T*[rows];
-    for (int i = 0; i < rows; ++i) {
-        board[i] = new T[columns];
-    }
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++) {
-            board[i][j] = 0;  
+    while (true) {
+        cout << prompt;
+        cin >> input;
+        if (!all_of(input.begin(), input.end(), ::isdigit)) {
+            cout << "Please enter a valid positive integer." << endl;
+            continue;
+        }
+        value = stoi(input);
+        if (value <= 0) {
+            cout << "Please enter a valid positive integer." << endl;
+        } else {
+            break;
         }
     }
-}
-
-template <typename T>
-bool Board<T>::update_board(int x, int y, T symbol) {
-    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] == 0) {
-        board[x][y] = symbol;
-        n_moves++;
-        return true;
-    }
-    return false;
-}
-
-template <typename T>
-void Board<T>::display_board() {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            cout << "[" << (board[i][j] == 0 ? ' ' : board[i][j]) << "]";
-        }
-        cout << endl;
-    }
-}
-
-template <typename T>
-bool Board<T>::is_win() {
-    // Check rows, columns, and diagonals
-    for (int i = 0; i < SIZE; i++) {
-        if (board[i][0] + board[i][1] + board[i][2] == WIN_SUM) return true;
-        if (board[0][i] + board[1][i] + board[2][i] == WIN_SUM) return true;
-    }
-    if (board[0][0] + board[1][1] + board[2][2] == WIN_SUM) return true;
-    if (board[0][2] + board[1][1] + board[2][0] == WIN_SUM) return true;
-
-    return false;
-}
-
-template <typename T>
-bool Board<T>::is_draw() {
-    return n_moves == SIZE * SIZE;
-}
-
-template <typename T>
-bool Board<T>::game_is_over() {
-    return is_win() || is_draw();
-}
-
-template <typename T>
-Player<T>::Player(string n, T symbol) {
-    this->name = n;
-    this->symbol = symbol;
-}
-
-template <typename T>
-Player<T>::Player(T symbol) {
-    this->name = "Computer";
-    this->symbol = symbol;
-}
-
-template <typename T>
-RandomPlayer<T>::RandomPlayer(T symbol) : Player<T>(symbol) {}
-
-template <typename T>
-void Player<T>::getmove(int& x, int& y) {
-    do {
-        x = rand() % SIZE;
-        y = rand() % SIZE;
-    } while (!boardPtr->update_board(x, y, symbol));
-}
-
-template <typename T>
-T Player<T>::getsymbol() {
-    return symbol;
-}
-
-template <typename T>
-string Player<T>::getname() {
-    return name;
-}
-
-template <typename T>
-void Player<T>::setBoard(Board<T>* b) {
-    this->boardPtr = b;
-}
-
-template <typename T>
-GameManager<T>::GameManager(Board<T>* bPtr, Player<T>* playerPtr[2]) {
-    boardPtr = bPtr;
-    players[0] = playerPtr[0];
-    players[1] = playerPtr[1];
-}
-
-template <typename T>
-void GameManager<T>::run() {
-    int x, y;
-
-    boardPtr->display_board();
-
-    while (!boardPtr->game_is_over()) {
-        for (int i = 0; i < 2; i++) {
-            cout << players[i]->getname() << "'s turn (" << players[i]->getsymbol() << "):\n";
-            players[i]->getmove(x, y);
-            boardPtr->display_board();
-            if (boardPtr->is_win()) {
-                cout << players[i]->getname() << " wins!\n";
-                return;
-            }
-            if (boardPtr->is_draw()) {
-                cout << "Draw!\n";
-                return;
-            }
-        }
-    }
+    return value;
 }
 
 int main() {
-    srand(time(0));
 
-    Board<int> board(3, 3);
-    Player<int>* players[2];
-    players[0] = new Player<int>("Player 1", 1);  
-    players[1] = new Player<int>("Player 2", 2);  
+    int n1 = 1, n2 = 2;
+    string name1, name2;
+    cout << "Enter Player " << n1 << " name: ";
+    getline(cin >> ws, name1);
 
-    for (int i = 0; i < 2; i++) {
-        players[i]->setBoard(&board);
+    cout << "Enter Player " << n2 << " name: ";
+    getline(cin >> ws, name2);
+
+    
+    int type1 = 0;
+    cout << "Choose Player " << n1 << " type:\n1. Human\n2. Random Computer\n";
+    type1 = get_pos_integer("Enter your choice: ");
+    while (type1 != 1 && type1 != 2) {
+        cout << "Enter a valid choice (1 or 2): ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        type1 = get_pos_integer("Enter your choice: ");
     }
 
-    GameManager<int> game(&board, players);
-    game.run();
+    int type2 = 0;
+    cout << "Choose Player " << n2 << " type:\n1. Human\n2. Random Computer\n";
+    type2 = get_pos_integer("Enter your choice: ");
+    while (type2 != 1 && type2 != 2) {
+        cout << "Enter a valid choice (1 or 2): ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        type2 = get_pos_integer("Enter your choice: ");
+    }
+
+    cout << "Player 1 " << name1 << " is assigned 'Odd' numbers (1, 3, 5, 7, 9)" << endl;
+    cout << "Player 2 " << name2 << " is assigned 'Even' numbers (2, 4, 6, 8)" << endl;
+
+    
+    NumericalTicTacToe<int>* game = new NumericalTicTacToe<int>();
+    if (type1 == 1)
+        game->set_player1(new HumanPlayer<int>(name1, 1));  
+    else if (type1 == 2)
+        game->set_player1(new RandomPlayer<int>(name1, 1)); 
+
+
+    if (type2 == 1)
+        game->set_player2(new HumanPlayer<int>(name2, 2));  
+    else if (type2 == 2)
+        game->set_player2(new RandomPlayer<int>(name2, 2)); 
+
+    game->play_game();
+
+    delete game->get_player1();
+    delete game->get_player2();
+    delete game;
 
     return 0;
 }
