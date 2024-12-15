@@ -1,31 +1,57 @@
-// BoardGame_Classes.h
-#ifndef BOARDGAME_CLASSES_H
-#define BOARDGAME_CLASSES_H
+#ifndef _BOARDGAME_CLASSES_H
+#define _BOARDGAME_CLASSES_H
 
+#include <string>
 #include <iostream>
+#include <vector>
 using namespace std;
 
-class NumericalBoard {
-private:
-    static const int size = 3;
-    int grid[size][size];
-    bool usedNumbers[10] = {false};
+template <typename T>
+class Board {
+protected:
+    int rows, columns;
+    T** board;
+    int n_moves = 0;
 
 public:
-    NumericalBoard();
-    void displayBoard() const;
-    bool placeNumber(int row, int col, int number);
-    bool checkWin() const;
+    Board(int r, int c);
+    virtual bool update_board(int x, int y, T symbol);
+    virtual void display_board();
+    virtual bool is_win();
+    virtual bool is_draw();
+    virtual bool game_is_over();
 };
 
-class NumericalGame {
-private:
-    NumericalBoard board;
-    bool isPlayer1Turn;
-
+template <typename T>
+class Player {
+protected:
+    string name;
+    T symbol;
+    Board<T>* boardPtr;
 public:
-    NumericalGame();
-    void play();
+    Player(string n, T symbol);
+    Player(T symbol);
+    virtual void getmove(int& x, int& y);
+    T getsymbol();
+    string getname();
+    void setBoard(Board<T>* b);
+};
+
+template <typename T>
+class RandomPlayer : public Player<T> {
+public:
+    RandomPlayer(T symbol);
+    virtual void getmove(int& x, int& y);
+};
+
+template <typename T>
+class GameManager {
+private:
+    Board<T>* boardPtr;
+    Player<T>* players[2];
+public:
+    GameManager(Board<T>* bPtr, Player<T>* playerPtr[2]);
+    void run();
 };
 
 #endif 
