@@ -35,7 +35,7 @@ int get_pos_integer(const string& prompt) {
 
 
 void pyramidTicTacToe() {
-    // Code for Pyramid Tic-Tac-Toe
+    
     cout << "You selected Pyramid Tic-Tac-Toe.\n";
     int choice;
     Player<char>* players[2];
@@ -99,12 +99,11 @@ void pyramidTicTacToe() {
 }
 
 void fourInARow() {
-    // Code for Four-in-a-row
+   
     cout << "You selected Four-in-a-row.\n";
 }
 
 void fiveByFiveTicTacToe() {
-    // Code for 5 x 5 Tic Tac Toe
     cout << "You selected 5 x 5 Tic Tac Toe.\n";
     // player and board setup
     int n1 = 1, n2 = 2;
@@ -163,7 +162,7 @@ void fiveByFiveTicTacToe() {
 
 
 void wordTicTacToe() {
-    // Code for Word Tic-Tac-Toe
+    
     cout << "You selected Word Tic-Tac-Toe.\n";
     int choice;
     Player<char>* players[2];
@@ -228,12 +227,10 @@ void wordTicTacToe() {
 }
 
 void numericalTicTacToe() {
-    // Code for Numerical Tic-Tac-Toe
     cout << "You selected Numerical Tic-Tac-Toe.\n";
 }
 
 void misereTicTacToe() {
-    // Code for Misere Tic Tac Toe
     cout << "You selected Misere Tic Tac Toe.\n";
      srand(static_cast<unsigned int>(time(0)));
 
@@ -296,7 +293,6 @@ void misereTicTacToe() {
 }
 
 void ultimateTicTacToe() {
-    // Code for Ultimate Tic Tac Toe
     cout << "You selected Ultimate Tic Tac Toe.\n";
     // player and board setup
     int n1 = 1, n2 = 2;
@@ -355,7 +351,6 @@ void ultimateTicTacToe() {
 }
 
 void susGame() {
-    // Code for SUS
     cout << "You selected SUS.\n";
 }
 
