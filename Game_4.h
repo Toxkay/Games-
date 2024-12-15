@@ -61,7 +61,7 @@ public:
 
 #include <iostream>
 #include <iomanip>
-#include <cctype>  // for toupper()
+#include <cctype>  
 
 using namespace std;
 
@@ -125,7 +125,7 @@ void Myboard<T>::display_board() {
 
 template <typename T>
 bool Myboard<T>::is_win() {
-    // Check rows, columns, and diagonals
+
     for (int i = 0; i < 3; ++i) {
         // Check row
         string row = "";
@@ -145,8 +145,8 @@ bool Myboard<T>::is_win() {
     // Check diagonals
     string diag1 = "", diag2 = "";
     for (int i = 0; i < 3; ++i) {
-        diag1 += this->board[i][i]; // Top-left to bottom-right
-        diag2 += this->board[i][2 - i]; // Top-right to bottom-left
+        diag1 += this->board[i][i]; 
+        diag2 += this->board[i][2 - i];
     }
     if (validWords.find(diag1) != validWords.end() || validWords.find(diag2) != validWords.end()) {
         return true;
@@ -194,12 +194,12 @@ template <typename T>
 X_O_Random_Player<T>::X_O_Random_Player(T symbol) : RandomPlayer<T>(symbol) {
     this->dimension = 3;
     this->name = "Random Computer Player";
-    srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+    srand(static_cast<unsigned int>(time(0))); 
 }
 
 template <typename T>
 void X_O_Random_Player<T>::getmove(int& x, int& y) {
-    x = rand() % this->dimension;  // Random number between 0 and 2
+    x = rand() % this->dimension;
     y = rand() % this->dimension;
     char randomC = 'A' + (rand()%26);
     this->symbol = randomC;
