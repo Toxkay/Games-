@@ -1,6 +1,13 @@
-// Misere Tic Tac Toe Game(6)
+
+
+//Misere Tic Tac Toe Game(6)
 #include "BoardGame_Classes.h"
 #include "Game_6.h"
+#include <iostream>
+#include <string>
+#include <limits>
+#include <cstdlib>
+#include <ctime>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -35,7 +42,7 @@ int get_pos_integer(const string &prompt)
 
 int main()
 {
-    srand(static_cast<unsigned int>(time(0)));
+    srand(static_cast<unsigned int>(time(0))); 
 
     // player and board setup
     string name1, name2;
@@ -45,19 +52,19 @@ int main()
     getline(cin >> ws, name2);
 
     // choosing player types
-    cout << "Choose Player 1 type:\n1. Human\n2. Random Computer\n3. AI\n";
+    cout << "Choose Player 1 type:\n1. Human\n2. Random Computer\n";
     int type1 = get_pos_integer("Enter your choice: ");
-    while (type1 > 3 && type1 < 1)
+    while (type1 != 1 && type1 != 2)
     {
-        cout << "Invalid choice. Choose 1 for Human or 2 for Random Computer or 3 for AI: ";
+        cout << "Invalid choice. Choose 1 for Human or 2 for Random Computer: ";
         type1 = get_pos_integer("Enter your choice: ");
     }
 
-    cout << "Choose Player 2 type:\n1. Human\n2. Random Computer\n3. AI\n";
+    cout << "Choose Player 2 type:\n1. Human\n2. Random Computer\n";
     int type2 = get_pos_integer("Enter your choice: ");
-    while (type2 > 3 && type2 < 1)
+    while (type2 != 1 && type2 != 2)
     {
-        cout << "Invalid choice. Choose 1 for Human or 2 for Random Computer or 3 for AI: ";
+        cout << "Invalid choice. Choose 1 for Human or 2 for Random Computer: ";
         type2 = get_pos_integer("Enter your choice: ");
     }
 
@@ -70,21 +77,11 @@ int main()
     if (type1 == 1)
         players[0] = new Misere_Player<char>(name1, 'X');
     else if (type1 == 2)
-        players[0] = new Random_Misere_Player<char>(name1, 'X');
-    else if (type1 == 3)
-    {
-        players[0] = new Misere_AI_Player<char>(name1, 'X');
-        players[0]->setBoard(B);
-    }
+        players[0] = new Random_Misere_Player<char>(name1,'X');
     if (type2 == 1)
         players[1] = new Misere_Player<char>(name2, 'O');
     else if (type2 == 2)
-        players[1] = new Random_Misere_Player<char>(name2, 'O');
-    else if (type2 == 3)
-    {
-        players[1] = new Misere_AI_Player<char>(name2, 'O');
-        players[1]->setBoard(B);
-    }
+        players[1] = new Random_Misere_Player<char>(name2,'O');
     GameManager<char> Misere(B, players);
     Misere.run();
     delete B;
@@ -93,4 +90,5 @@ int main()
         delete players[i];
     }
     system("pause");
+
 }
