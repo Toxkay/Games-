@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <cctype>
 using namespace std;
-bool Over = false;
+bool over = false;
 template <typename T>
 class Board5x5 : public Board<T>
 {
@@ -80,7 +80,7 @@ private:
 public:
     Board5x5()
     {
-        Over = false;
+        over = false;
         this->rows = this->columns = 5;
         this->board = new char *[this->rows];
         for (int i = 0; i < this->rows; i++)
@@ -94,7 +94,7 @@ public:
  
     void display_board()
     {
-        if (Over)
+        if (over)
             return;
         for (int i = 0; i < this->rows; i++)
         {
@@ -114,7 +114,7 @@ public:
  
     bool update_board(int x, int y, char symbol)
     {
-        if (Over)
+        if (over)
         {
             this->n_moves++;
             return true;
@@ -137,7 +137,7 @@ public:
                 return true;
             else if (oCount == xCount)
                 return false;
-            Over = true;
+            over = true;
             return false;
         }
         if (this->n_moves == 25)
@@ -145,7 +145,7 @@ public:
         return true;
     }
    
-    bool is_draw() { return this->n_moves == 24 && !Over; }
+    bool is_draw() { return this->n_moves == 24 && !over; }
     
     bool game_is_over() { return is_win() || is_draw(); }
    
@@ -186,7 +186,7 @@ public:
     Player5x5(T symbol) : Player<T>(symbol) {}
     void getmove(int &x, int &y)
     {
-        if (Over)
+        if (over)
             return;
         get_valid_input(x, y);
     }
@@ -208,7 +208,7 @@ public:
    
     void getmove(int &x, int &y)
     {
-        if (Over)
+        if (over)
             return;
         x = rand() % 5;
         y = rand() % 5;
