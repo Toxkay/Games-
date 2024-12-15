@@ -4,7 +4,7 @@
 using namespace std;
 
 template <typename T>
-class Ultimate_Board : public Board<T> {
+class SUS_Board : public Board<T> {
 private:
     vector<vector<T>> Boards; 
 
@@ -27,7 +27,7 @@ private:
     }
 
 public:
-    Ultimate_Board() {
+    SUS_Board() {
         Boards.resize(3, vector<T>(3, ' ')); 
     }
 
@@ -67,7 +67,7 @@ public:
 };
 
 template <typename T>
-class Ultimate_Player : public Player<T> {
+class SUS_Player_1: public Player<T> {
 private:
     void get_valid_input(int& x, int& y) const {
         while (true) {
@@ -80,8 +80,8 @@ private:
     }
 
 public:
-    Ultimate_Player(string name, T symbol) : Player<T>(name, symbol) {}
-    Ultimate_Player(T symbol) : Player<T>("", symbol) {}
+    SUS_Player_1(string name, T symbol) : Player<T>(name, symbol) {}
+    SUS_Player_1(T symbol) : Player<T>("", symbol) {}
 
     void getmove(int& x, int& y) override {
         get_valid_input(x, y);
@@ -89,9 +89,9 @@ public:
 };
 
 template <typename T>
-class Random_Ultimate_Player : public RandomPlayer<T> {
+class SUS_Player_2 : public SUS_Player_2<T> {
 public:
-    Random_Ultimate_Player(string name, T symbol) : RandomPlayer<T>(name, symbol) {}
+    SUS_Player_2(string name, T symbol) : Player<T>(name, symbol) {}
 
     void getmove(int& x, int& y) override {
         x = rand() % 3;
