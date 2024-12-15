@@ -1,87 +1,85 @@
 #include "BoardGame_Classes.h"
-#include <unordered_set>
-#include <iostream>
-#include <vector>
-#include <algorithm>
 using namespace std;
 
-class NumericalTicTacToe {
-private:
-    GameBoard board;
-    unordered_set<int> usedNumbers;
-    unordered_set<int> oddNumbers = {1, 3, 5, 7, 9};
-    unordered_set<int> evenNumbers = {2, 4, 6, 8};
+NumericalBoard::NumericalBoard() {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            grid[i][j] = 0;
+        }
+    }
+}
 
-    bool isValidNumber(int num, bool isPlayer1) const {
-        const auto& validNumbers = isPlayer1 ? oddNumbers : evenNumbers;
-        return validNumbers.count(num) && !usedNumbers.count(num);
+void NumericalBoard::displayBoard() const {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            if (grid[i][j] == 0) {
+                cout << ". ";
+            } else {
+                cout << grid[i][j] << " ";
+            }
+        }
+        cout << endl;
+    }
+}
+
+bool NumericalBoard::placeNumber(int row, int col, int number) {
+    if (row < 0 || row >= size || col < 0 || col >= size || grid[row][col] != 0 || usedNumbers[number]) {
+        return false;
     }
 
-    bool isValidPosition(int row, int col) const {
-        return row >= 0 && row < board.getSize() && col >= 0 && col < board.getSize();
+    grid[row][col] = number;
+    usedNumbers[number] = true;
+    return true;
+}
+
+bool NumericalBoard::checkWin() const {
+    for (int i = 0; i < size; ++i) {
+        if (grid[i][0] + grid[i][1] + grid[i][2] == 15 || 
+            grid[0][i] + grid[1][i] + grid[2][i] == 15) { 
+            return true;
+        }
     }
 
-    
-    bool getPlayerMove(int& num, int& row, int& col, bool isPlayer1) {
-        cout << "Player " << (isPlayer1 ? "1 (Odd)" : "2 (Even)")
-             << ", enter your number and position (row and column): ";
-        cin >> num >> row >> col;
-
-        if (!isValidPosition(row, col)) {
-            cout << "Invalid position. Please choose a valid row and column.\n";
-            return false;
-        }
-
-        if (!isValidNumber(num, isPlayer1)) {
-            cout << "Invalid number. Please choose a valid " 
-                 << (isPlayer1 ? "odd" : "even") << " number that hasn't been used.\n";
-            return false;
-        }
-
-        if (!board.isCellEmpty(row, col)) {  
-            cout << "The cell is already occupied. Try again.\n";
-            return false;
-        }
-
+    if (grid[0][0] + grid[1][1] + grid[2][2] == 15 || 
+        grid[0][2] + grid[1][1] + grid[2][0] == 15) {
         return true;
     }
 
-public:
-    void playGame() {
-        bool isPlayer1 = true;
+    return false;
+}
 
-        while (true) {
-            board.displayBoard();
+NumericalGame::NumericalGame() : isPlayer1Turn(true) {}
 
-            int num, row, col;
-            if (!getPlayerMove(num, row, col, isPlayer1)) {
-                continue;
-            }
+void NumericalGame::play() {
+    int row, col, number;
 
-            
-            board.placeNumber(row, col, num);
-            usedNumbers.insert(num);
+    while (true) {
+        board.displayBoard();
+        cout << "Player " << (isPlayer1Turn ? 1 : 2) << ", enter your move (row, col, number): ";
+        cin >> row >> col >> number;
 
-            if (board.checkWin()) {
-                board.displayBoard();
-                cout << "Player " << (isPlayer1 ? "1 (Odd)" : "2 (Even)") << " wins!\n";
-                break;
-            }
-            
-            if (board.isFull()) {
-                board.displayBoard();
-                cout << "The game is a draw!\n";
-                break;
-            }
-
-            
-            isPlayer1 = !isPlayer1;
+        if ((isPlayer1Turn && number % 2 == 0) || (!isPlayer1Turn && number % 2 != 0)) {
+            cout << "Invalid number for this player. Try again.\n";
+            continue;
         }
+
+        if (!board.placeNumber(row, col, number)) {
+            cout << "Invalid move! Try again.\n";
+            continue;
+        }
+
+        if (board.checkWin()) {
+            board.displayBoard();
+            cout << "Player " << (isPlayer1Turn ? 1 : 2) << " wins!\n";
+            break;
+        }
+
+        isPlayer1Turn = !isPlayer1Turn;
     }
-};
+}
 
 int main() {
-    NumericalTicTacToe game;
-    game.playGame();
+    NumericalGame game;
+    game.play();
     return 0;
 }
