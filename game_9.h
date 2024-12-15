@@ -1,27 +1,57 @@
-#ifndef BOARDGAME_CLASSES_H
-#define BOARDGAME_CLASSES_H
+#ifndef _BOARDGAME_CLASSES_H
+#define _BOARDGAME_CLASSES_H
 
 #include <string>
-#include <vector>
+#include <iostream>
+using namespace std;
 
-class BoardGame {
-private:
-    std::vector<std::vector<char>> board;
-    int player1Score;
-    int player2Score;
-    char currentPlayer;
-    int totalMoves;
-
-    int checkSUS();
+template <typename T>
+class Board {
+protected:
+    int rows, columns;
+    T** board;
+    int n_moves = 0;
 
 public:
-    BoardGame();
-    void displayBoard() const;
-    bool makeMove(int row, int col);
-    bool checkForWin();
-    void switchPlayer();
-    int getPlayerScore(char player) const;
-    void play();
+    Board(int r, int c);
+    virtual bool update_board(int x, int y, T symbol);
+    virtual void display_board();
+    virtual bool is_win();
+    virtual bool is_draw();
+    virtual bool game_is_over();
+    virtual int checkSUS();
 };
 
-#endif // BOARDGAME_CLASSES_H
+template <typename T>
+class Player {
+protected:
+    string name;
+    T symbol;
+    Board<T>* boardPtr;
+public:
+    Player(string n, T symbol);
+    Player(T symbol);
+    virtual void getmove(int& x, int& y);
+    T getsymbol();
+    string getname();
+    void setBoard(Board<T>* b);
+};
+
+template <typename T>
+class RandomPlayer : public Player<T> {
+public:
+    RandomPlayer(T symbol);
+    virtual void getmove(int& x, int& y);
+};
+
+template <typename T>
+class GameManager {
+private:
+    Board<T>* boardPtr;
+    Player<T>* players[2];
+public:
+    GameManager(Board<T>* bPtr, Player<T>* playerPtr[2]);
+    void run();
+};
+
+#endif 

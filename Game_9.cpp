@@ -1,44 +1,63 @@
 #include "BoardGame_Classes.h"
-#include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-BoardGame::BoardGame() : board(3, vector<char>(3, ' ')), player1Score(0), player2Score(0), currentPlayer('S'), totalMoves(0) {}
+const int SIZE = 3;
 
-void BoardGame::displayBoard() const {
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
+template <typename T>
+Board<T>::Board(int r, int c) {
+    rows = r;
+    columns = c;
+    board = new T*[rows];
+    for (int i = 0; i < rows; ++i) {
+        board[i] = new T[columns];
+    }
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            board[i][j] = ' ';
+        }
+    }
+}
+
+template <typename T>
+bool Board<T>::update_board(int x, int y, T symbol) {
+    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] == ' ') {
+        board[x][y] = symbol;
+        n_moves++;
+        return true;
+    }
+    return false;
+}
+
+template <typename T>
+void Board<T>::display_board() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
             cout << "[" << board[i][j] << "]";
         }
         cout << endl;
     }
 }
 
-bool BoardGame::makeMove(int row, int col) {
-    if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
-        board[row][col] = currentPlayer;
-        totalMoves++;
-        return true;
-    }
-    return false;
-}
-
-void BoardGame::switchPlayer() {
-    currentPlayer = (currentPlayer == 'S') ? 'U' : 'S';
-}
-
-int BoardGame::checkSUS() {
+template <typename T>
+int Board<T>::checkSUS() {
     int count = 0;
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < SIZE; i++) {
         if (board[i][0] == 'S' && board[i][1] == 'U' && board[i][2] == 'S') {
             count++;
         }
+    }
+
+    for (int i = 0; i < SIZE; i++) {
         if (board[0][i] == 'S' && board[1][i] == 'U' && board[2][i] == 'S') {
             count++;
         }
     }
 
+    // Check diagonals for "S-U-S"
     if (board[0][0] == 'S' && board[1][1] == 'U' && board[2][2] == 'S') {
         count++;
     }
@@ -49,49 +68,102 @@ int BoardGame::checkSUS() {
     return count;
 }
 
-bool BoardGame::checkForWin() {
-    int susCount = checkSUS();
-    if (susCount > 0) {
-        if (currentPlayer == 'S') {
-            player1Score += susCount;
-        } else {
-            player2Score += susCount;
-        }
-        return true;
-    }
-    return totalMoves == 9;
+template <typename T>
+bool Board<T>::is_win() {
+    return checkSUS() > 0;
 }
 
-int BoardGame::getPlayerScore(char player) const {
-    return (player == 'S') ? player1Score : player2Score;
+template <typename T>
+bool Board<T>::is_draw() {
+    return n_moves == 9 && checkSUS() == 0;
 }
 
-void BoardGame::play() {
-    int row, col;
-    while (!checkForWin()) {
-        displayBoard();
-        cout << "Player " << currentPlayer << "'s turn. Enter row and column (0-2): ";
-        cin >> row >> col;
+template <typename T>
+bool Board<T>::game_is_over() {
+    return is_win() || is_draw();
+}
 
-        if (makeMove(row, col)) {
-            if (checkForWin()) {
-                break;
+template <typename T>
+Player<T>::Player(string n, T symbol) {
+    this->name = n;
+    this->symbol = symbol;
+}
+
+template <typename T>
+Player<T>::Player(T symbol) {
+    this->name = "Computer";
+    this->symbol = symbol;
+}
+
+template <typename T>
+RandomPlayer<T>::RandomPlayer(T symbol) : Player<T>(symbol) {}
+
+template <typename T>
+void Player<T>::getmove(int& x, int& y) {
+    do {
+        x = rand() % SIZE;
+        y = rand() % SIZE;
+    } while (!boardPtr->update_board(x, y, symbol));
+}
+
+template <typename T>
+T Player<T>::getsymbol() {
+    return symbol;
+}
+
+template <typename T>
+string Player<T>::getname() {
+    return name;
+}
+
+template <typename T>
+void Player<T>::setBoard(Board<T>* b) {
+    boardPtr = b;
+}
+
+template <typename T>
+GameManager<T>::GameManager(Board<T>* bPtr, Player<T>* playerPtr[2]) {
+    boardPtr = bPtr;
+    players[0] = playerPtr[0];
+    players[1] = playerPtr[1];
+}
+
+template <typename T>
+void GameManager<T>::run() {
+    int x, y;
+
+    boardPtr->display_board();
+
+    while (!boardPtr->game_is_over()) {
+        for (int i = 0; i < 2; i++) {
+            players[i]->getmove(x, y);
+            boardPtr->display_board();
+            if (boardPtr->is_win()) {
+                cout << players[i]->getname() << " wins!\n";
+                return;
             }
-            switchPlayer();
-        } else {
-            cout << "Invalid move. Try again.\n";
+            if (boardPtr->is_draw()) {
+                cout << "Draw!\n";
+                return;
+            }
         }
     }
+}
 
-    displayBoard();
-    cout << "Game over!\n";
-    cout << "Player S score: " << player1Score << endl;
-    cout << "Player U score: " << player2Score << endl;
-    if (player1Score > player2Score) {
-        cout << "Player S wins!" << endl;
-    } else if (player2Score > player1Score) {
-        cout << "Player U wins!" << endl;
-    } else {
-        cout << "It's a draw!" << endl;
+int main() {
+    srand(time(0));
+
+    Board<char> board(3, 3);
+    Player<char>* players[2];
+    players[0] = new RandomPlayer<char>('S');
+    players[1] = new RandomPlayer<char>('U');
+
+    for (int i = 0; i < 2; i++) {
+        players[i]->setBoard(&board);
     }
+
+    GameManager<char> game(&board, players);
+    game.run();
+
+    return 0;
 }
