@@ -25,13 +25,17 @@ int get_pos_integer(const string& prompt) {
     return value;
 }
 
+
 bool is_valid_move(int x, int y, vector<vector<char>>& board) {
     return x >= 0 && x < 3 && y >= 0 && y < 3 && board[x][y] == ' ';
 }
 
+
 bool check_sus_sequence(vector<vector<char>>& board, char symbol) {
     for (int i = 0; i < 3; i++) {
-        if (board[i][0] == symbol && board[i][1] == 'U' && board[i][2] == symbol) return true
+        
+        if (board[i][0] == symbol && board[i][1] == 'U' && board[i][2] == symbol) return true;
+        
         if (board[0][i] == symbol && board[1][i] == 'U' && board[2][i] == symbol) return true;
     }
     
@@ -42,21 +46,21 @@ bool check_sus_sequence(vector<vector<char>>& board, char symbol) {
 }
 
 template <typename T>
-class Ultimate_Board : public Board<T>
-{
+class Ultimate_Board : public Board<T> {
 private:
     vector<vector<T>> Boards; 
 
     bool is_valid_move(short x, short y) {
         return x >= 0 && x < 3 && y >= 0 && y < 3 && Boards[x][y] == ' ';
     }
-    
+
     bool CheckBoardWin(vector<char>& b, T& s) {
         return check_sus_sequence(Boards, s);
     }
 
 public:
     Ultimate_Board() {
+        
         Boards.resize(3, vector<T>(3, ' '));
     }
 
@@ -78,10 +82,7 @@ public:
     }
 
     bool is_win() {
-        for (int i = 0; i < 3; ++i) {
-            if (check_sus_sequence(Boards, 'S')) return true;
-        }
-        return false;
+        return check_sus_sequence(Boards, 'S');
     }
 
     bool is_draw() {
@@ -99,15 +100,14 @@ public:
 };
 
 template <typename T>
-class Ultimate_Player : public Player<T>
-{
+class Ultimate_Player : public Player<T> {
 private:
+    
     bool is_valid_input(string& input) {
         return (input == "S" || input == "U");
     }
 
     void get_valid_input(int& x, int& y) {
-        string input;
         while (true) {
             cout << "Enter your move (row and column, e.g., 1 2): ";
             cin >> x >> y;
@@ -127,8 +127,7 @@ public:
 };
 
 template <typename T>
-class Random_Ultimate_Player : public RandomPlayer<T>
-{
+class Random_Ultimate_Player : public RandomPlayer<T> {
 public:
     Random_Ultimate_Player(string name, T symbol) : RandomPlayer<T>(name, symbol) {}
 
