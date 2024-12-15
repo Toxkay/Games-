@@ -3,8 +3,6 @@
 #include "game_9.h"
 
 using namespace std;
-
-
 int get_pos_integer(const string& prompt) {
     string input;
     int value;
@@ -24,24 +22,6 @@ int get_pos_integer(const string& prompt) {
         }
     }
     return value;
-}
-
-bool is_valid_move(int x, int y, vector<vector<char>>& board) {
-    return x >= 0 && x < 3 && y >= 0 && y < 3 && board[x][y] == ' ';
-}
-
-bool check_sus_sequence(vector<vector<char>>& board, char symbol) {
-    
-    for (int i = 0; i < 3; i++) {
-        
-        if (board[i][0] == symbol && board[i][1] == 'U' && board[i][2] == symbol) return true;
-        
-        if (board[0][i] == symbol && board[1][i] == 'U' && board[2][i] == symbol) return true;
-    }
-    
-    if (board[0][0] == symbol && board[1][1] == 'U' && board[2][2] == symbol) return true;
-    if (board[0][2] == symbol && board[1][1] == 'U' && board[2][0] == symbol) return true;
-    return false;
 }
 
 int main() {
