@@ -4,27 +4,6 @@
 
 using namespace std;
 
-int get_pos_integer(const string& prompt) {
-    string input;
-    int value;
-
-    while (true) {
-        cout << prompt;
-        cin >> input;
-        if (!all_of(input.begin(), input.end(), ::isdigit)) {
-            cout << "Please enter a valid positive integer." << endl;
-            continue;
-        }
-        value = stoi(input);
-        if (value <= 0) {
-            cout << "Please enter a valid positive integer." << endl;
-        } else {
-            break;
-        }
-    }
-    return value;
-}
-
 int main() {
 
     int n1 = 1, n2 = 2;
