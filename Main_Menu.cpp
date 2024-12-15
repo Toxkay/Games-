@@ -3,6 +3,7 @@
 
 #include "Game1.h"
 #include "Game_3.h"
+#include "Game4.h"
 #include "Game_6.h"
 #include "Game_8.h"
 
@@ -38,7 +39,7 @@ void pyramidTicTacToe() {
     cout << "You selected Pyramid Tic-Tac-Toe.\n";
     int choice;
     Player<char>* players[2];
-    Myboard<char>* B = new Myboard<char>();
+    Myboard4<char>* B = new Myboard4<char>();
     string playerXName, player2Name;
 
     cout << "Welcome to FCAI Tic-tac-Toe Game. :)\n";
@@ -80,7 +81,7 @@ void pyramidTicTacToe() {
             break;
         default:
             cout << "Invalid choice for Player 1. Exiting the game.\n";
-            return ;
+            return;
     }
 
 
@@ -160,9 +161,70 @@ void fiveByFiveTicTacToe() {
     }
 }
 
+
 void wordTicTacToe() {
     // Code for Word Tic-Tac-Toe
     cout << "You selected Word Tic-Tac-Toe.\n";
+    int choice;
+    Player<char>* players[2];
+    Myboard4<char>* B = new Myboard4<char>();
+    string playerXName, player2Name;
+    B->load();
+    cout << "Welcome to FCAI Tic-tac-Toe Game. :)\n";
+
+    // Set up player 1
+    cout << "Enter Player 1 name: ";
+    cin >> playerXName;
+    cout << "Choose Player X type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cin >> choice;
+
+    switch(choice) {
+        case 1:
+            players[0] = new Player4<char>(playerXName, '0');
+            break;
+        case 2:
+            players[0] = new X_O_Random_Player4<char>('0');
+            break;
+        default:
+            cout << "Invalid choice for Player 1. Exiting the game.\n";
+            return;
+    }
+
+    // Set up player 2
+    cout << "Enter Player 2 name: ";
+    cin >> player2Name;
+    cout << "Choose Player 2 type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cin >> choice;
+
+
+
+    switch(choice) {
+        case 1:
+            players[1] = new Player4<char>(player2Name, '0');
+            break;
+        case 2:
+            players[1] = new X_O_Random_Player4<char>('0');
+            break;
+        default:
+            cout << "Invalid choice for Player 1. Exiting the game.\n";
+            return;
+    }
+
+
+    players[0]->setBoard(B);
+    players[1]->setBoard(B);
+
+    GameManager<char> ticgame(B, players);
+    ticgame.run();
+
+    delete B;
+    for (int i = 0; i < 2; ++i) {
+        delete players[i];
+    }
 }
 
 void numericalTicTacToe() {
@@ -236,6 +298,60 @@ void misereTicTacToe() {
 void ultimateTicTacToe() {
     // Code for Ultimate Tic Tac Toe
     cout << "You selected Ultimate Tic Tac Toe.\n";
+    // player and board setup
+    int n1 = 1, n2 = 2;
+    string name1, name2;
+
+    cout << "Enter Player " << n1 << " name: ";
+    getline(cin >> ws, name1);
+
+    cout << "Enter Player " << n2 << " name: ";
+    getline(cin >> ws, name2);
+
+    // choosing  player types
+    int type1 = 0;
+    cout << "Choose Player " << n1 << " type:\n1. Human\n2. Random Computer\n";
+    type1 = get_pos_integer("Enter your choice: ");
+    while (type1 != 1 && type1 != 2) {
+        cout << "Enter a valid choice (1 or 2): ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        type1 = get_pos_integer("Enter your choice: ");
+    }
+
+    int type2 = 0;
+    cout << "Choose Player " << n2 << " type:\n1. Human\n2. Random Computer\n";
+    type2 = get_pos_integer("Enter your choice: ");
+    while (type2 != 1 && type2 != 2) {
+        cout << "Enter a valid choice (1 or 2): ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        type2 = get_pos_integer("Enter your choice: ");
+    }
+    cout <<"Player 1 "<<name1<<" is assigned  'X' "<<endl;
+    cout <<"Player 2 "<<name2<<" is assigned  'O' "<<endl;
+
+    // creates players and board
+    Player<char>* players[2];
+    Ultimate_Board<char>* B = new Ultimate_Board<char>();
+    if(type1 == 1)
+        players[0] = new Ultimate_Player<char>(name1, 'X');
+
+    else if (type1 == 2)
+        players[0] = new Random_Ultimate_Player<char>(name1,'X');
+    if (type2 == 1)
+        players[1] = new Ultimate_Player<char>(name2, 'O');
+    else if (type2 == 2)
+        players[1] = new Random_Ultimate_Player<char>(name2,'O');
+
+    GameManager<char> G5x5(B, players);
+    G5x5.run();
+
+    delete B;
+    for (int i = 0; i < 2; ++i) {
+        delete players[i];
+    }
+    
 }
 
 void susGame() {
