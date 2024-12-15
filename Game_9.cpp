@@ -1,88 +1,97 @@
 #include "BoardGame_Classes.h"
 #include <iostream>
+
 using namespace std;
 
-class SUSGame {
-private:
-    GameBoard board;
-    int player1Score = 0;
-    int player2Score = 0;
+BoardGame::BoardGame() : board(3, vector<char>(3, ' ')), player1Score(0), player2Score(0), currentPlayer('S'), totalMoves(0) {}
 
-    void displayScores() const {
-        cout << "Scores:\n";
-        cout << "Player 1: " << player1Score << "\n";
-        cout << "Player 2: " << player2Score << "\n";
-    }
-
-    bool isValidLetter(char letter) const {
-        return letter == 'S' || letter == 'U';
-    }
-
-public:
-    void playGame() {
-        int turn = 1;
-        char player1Letter, player2Letter;
-
-        
-        cout << "Player 1, choose your letter (S or U): ";
-        cin >> player1Letter;
-        if (!isValidLetter(player1Letter)) {
-            cout << "Invalid letter. Defaulting to 'S'.\n";
-            player1Letter = 'S';
+void BoardGame::displayBoard() const {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            cout << "[" << board[i][j] << "]";
         }
+        cout << endl;
+    }
+}
 
-        player2Letter = (player1Letter == 'S') ? 'U' : 'S';
-        cout << "Player 2 will use: " << player2Letter << "\n";
+bool BoardGame::makeMove(int row, int col) {
+    if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
+        board[row][col] = currentPlayer;
+        totalMoves++;
+        return true;
+    }
+    return false;
+}
 
-        while (true) {
-            board.displayBoard();
-            displayScores();
+void BoardGame::switchPlayer() {
+    currentPlayer = (currentPlayer == 'S') ? 'U' : 'S';
+}
 
-        
-            char currentLetter = (turn % 2 == 1) ? player1Letter : player2Letter;
-            cout << "Player " << ((turn % 2 == 1) ? "1" : "2") << " (" << currentLetter
-                 << "), enter your move (row and column): ";
+int BoardGame::checkSUS() {
+    int count = 0;
 
-            int row, col;
-            cin >> row >> col;
+    for (int i = 0; i < 3; ++i) {
+        if (board[i][0] == 'S' && board[i][1] == 'U' && board[i][2] == 'S') {
+            count++;
+        }
+        if (board[0][i] == 'S' && board[1][i] == 'U' && board[2][i] == 'S') {
+            count++;
+        }
+    }
 
-            
-            if (!board.placeLetter(row, col, currentLetter)) {
-                cout << "Invalid move. Try again.\n";
-                continue;
-            }
+    if (board[0][0] == 'S' && board[1][1] == 'U' && board[2][2] == 'S') {
+        count++;
+    }
+    if (board[0][2] == 'S' && board[1][1] == 'U' && board[2][0] == 'S') {
+        count++;
+    }
 
-            
-            int newSUS = board.countSUS(currentLetter);
-            if (turn % 2 == 1) {
-                player1Score += newSUS;
-            } else {
-                player2Score += newSUS;
-            }
+    return count;
+}
 
-            
-            if (board.isFull()) {
-                board.displayBoard();
-                displayScores();
-                cout << "Game over!\n";
-                if (player1Score > player2Score) {
-                    cout << "Player 1 wins!\n";
-                } else if (player2Score > player1Score) {
-                    cout << "Player 2 wins!\n";
-                } else {
-                    cout << "It's a draw!\n";
-                }
+bool BoardGame::checkForWin() {
+    int susCount = checkSUS();
+    if (susCount > 0) {
+        if (currentPlayer == 'S') {
+            player1Score += susCount;
+        } else {
+            player2Score += susCount;
+        }
+        return true;
+    }
+    return totalMoves == 9;
+}
+
+int BoardGame::getPlayerScore(char player) const {
+    return (player == 'S') ? player1Score : player2Score;
+}
+
+void BoardGame::play() {
+    int row, col;
+    while (!checkForWin()) {
+        displayBoard();
+        cout << "Player " << currentPlayer << "'s turn. Enter row and column (0-2): ";
+        cin >> row >> col;
+
+        if (makeMove(row, col)) {
+            if (checkForWin()) {
                 break;
             }
-
-            
-            ++turn;
+            switchPlayer();
+        } else {
+            cout << "Invalid move. Try again.\n";
         }
     }
-};
 
-int main() {
-    SUSGame game;
-    game.playGame();
-    return 0;
+    displayBoard();
+    cout << "Game over!\n";
+    cout << "Player S score: " << player1Score << endl;
+    cout << "Player U score: " << player2Score << endl;
+    if (player1Score > player2Score) {
+        cout << "Player S wins!" << endl;
+    } else if (player2Score > player1Score) {
+        cout << "Player U wins!" << endl;
+    } else {
+        cout << "It's a draw!" << endl;
+    }
 }
