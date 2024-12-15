@@ -51,7 +51,10 @@ public:
             for (int j = 0; j < this->columns; j++)
             {
                 cout << "(" << i << "," << j << ")";
-                cout << setw(2) << this->board[i][j] << " |";
+                 if (this->board[i][j] != 0)
+                    cout << this->board[i][j] << " |";
+                else
+                    cout << "  |";
             }
             cout << "\n-------------------------------";
         }
