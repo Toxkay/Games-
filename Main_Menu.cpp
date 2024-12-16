@@ -6,6 +6,7 @@
 #include "Game4.h"
 #include "Game_6.h"
 #include "Game_8.h"
+#include "Game_9.h"
 
 
 using namespace std;
@@ -99,62 +100,8 @@ void pyramidTicTacToe() {
 }
 
 void fourInARow() {
+   
     cout << "You selected Four-in-a-row.\n";
-    
-    int n1 = 1, n2 = 2;
-    string name1, name2;
-
-    cout << "Enter Player " << n1 << " name: ";
-    getline(cin >> ws, name1);
-
-    cout << "Enter Player " << n2 << " name: ";
-    getline(cin >> ws, name2);
-
-    int type1 = 0;
-    cout << "Choose Player " << n1 << " type:\n1. Human\n2. Random Computer\n";
-    type1 = get_pos_integer("Enter your choice: ");
-    while (type1 != 1 && type1 != 2) {
-        cout << "Enter a valid choice (1 or 2): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        type1 = get_pos_integer("Enter your choice: ");
-    }
-
-    int type2 = 0;
-    cout << "Choose Player " << n2 << " type:\n1. Human\n2. Random Computer\n";
-    type2 = get_pos_integer("Enter your choice: ");
-    while (type2 != 1 && type2 != 2) {
-        cout << "Enter a valid choice (1 or 2): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        type2 = get_pos_integer("Enter your choice: ");
-    }
-
-    cout << "Player 1 " << name1 << " is assigned 'X'" << endl;
-    cout << "Player 2 " << name2 << " is assigned 'O'" << endl;
-    Player<char>* players[2];
-    ConnectFourBoard<char>* B = new ConnectFourBoard<char>();  
-
-    if (type1 == 1)
-        players[0] = new ConnectFourPlayer<char>(name1, 'X');
-    else if (type1 == 2)
-        players[0] = new RandomConnectFourPlayer<char>(name1, 'X');
-
-    if (type2 == 1)
-        players[1] = new ConnectFourPlayer<char>(name2, 'O');
-    else if (type2 == 2)
-        players[1] = new RandomConnectFourPlayer<char>(name2, 'O');
-
-    GameManager<char> G(B, players);  
-    G.run();  
-
-    delete B;
-    for (int i = 0; i < 2; ++i) {
-        delete players[i];
-    }
-
-    return 0;
-}
 }
 
 void fiveByFiveTicTacToe() {
@@ -282,60 +229,6 @@ void wordTicTacToe() {
 
 void numericalTicTacToe() {
     cout << "You selected Numerical Tic-Tac-Toe.\n";
-    int n1 = 1, n2 = 2;
-    string name1, name2;
-    cout << "Enter Player " << n1 << " name: ";
-    getline(cin >> ws, name1);
-
-    cout << "Enter Player " << n2 << " name: ";
-    getline(cin >> ws, name2);
-
-    
-    int type1 = 0;
-    cout << "Choose Player " << n1 << " type:\n1. Human\n2. Random Computer\n";
-    type1 = get_pos_integer("Enter your choice: ");
-    while (type1 != 1 && type1 != 2) {
-        cout << "Enter a valid choice (1 or 2): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        type1 = get_pos_integer("Enter your choice: ");
-    }
-
-    int type2 = 0;
-    cout << "Choose Player " << n2 << " type:\n1. Human\n2. Random Computer\n";
-    type2 = get_pos_integer("Enter your choice: ");
-    while (type2 != 1 && type2 != 2) {
-        cout << "Enter a valid choice (1 or 2): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        type2 = get_pos_integer("Enter your choice: ");
-    }
-
-    cout << "Player 1 " << name1 << " is assigned 'Odd' numbers (1, 3, 5, 7, 9)" << endl;
-    cout << "Player 2 " << name2 << " is assigned 'Even' numbers (2, 4, 6, 8)" << endl;
-
-    
-    NumericalTicTacToe<int>* game = new NumericalTicTacToe<int>();
-    if (type1 == 1)
-        game->set_player1(new HumanPlayer<int>(name1, 1));  
-    else if (type1 == 2)
-        game->set_player1(new RandomPlayer<int>(name1, 1)); 
-
-
-    if (type2 == 1)
-        game->set_player2(new HumanPlayer<int>(name2, 2));  
-    else if (type2 == 2)
-        game->set_player2(new RandomPlayer<int>(name2, 2)); 
-
-    game->play_game();
-
-    delete game->get_player1();
-    delete game->get_player2();
-    delete game;
-
-    return 0;
-}
-
 }
 
 void misereTicTacToe() {
@@ -459,7 +352,77 @@ void ultimateTicTacToe() {
 }
 
 void susGame() {
-    cout << "You selected SUS.\n";
+   int choice;
+    Player<char>* players[2];
+    MyBoard9<char>* B = new MyBoard9<char>();
+    string playerXName, player2Name;
+
+    cout << "Welcome to FCAI Tic-tac-Toe Game. :)\n";
+
+    // Set up player 1
+    cout << "Enter Player 1 name: ";
+    cin >> playerXName;
+    cout << "Choose Player 1 type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cin >> choice;
+
+    switch(choice) {
+        case 1:
+            players[0] = new Player9<char>(playerXName, 'S');
+            break;
+        case 2:
+            players[0] = new Random_Player9<char>('S');
+            break;
+        default:
+            cout << "Invalid choice for Player 1. Exiting the game.\n";
+            return ;
+    }
+
+    // Set up player 2
+    cout << "Enter Player 2 name: ";
+    cin >> player2Name;
+    cout << "Choose Player 2 type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cin >> choice;
+
+    switch(choice) {
+        case 1:
+            players[1] = new Player9<char>(playerXName, 'U');
+            break;
+        case 2:
+            players[1] = new Random_Player9<char>('U');
+            break;
+        default:
+            cout << "Invalid choice for Player 1. Exiting the game.\n";
+            return ;
+    }
+
+    players[0]->setBoard(B);
+    players[1]->setBoard(B);
+
+    // Create the game manager and run the game
+    GameManager<char> susgame(B, players);
+    susgame.run();
+
+    cout << playerXName << " scores : " <<B->score1 << endl;
+    cout << player2Name << " scores : " <<B->score2<< endl ;
+
+    if (B->score2 > B->score1){
+        cout << player2Name << " WINS!";
+    } else if (B->score2 < B->score1){
+        cout << playerXName << " WINS!";
+    }
+    else{
+        cout << "DRAW";
+    }
+
+    // Clean up
+    delete B;
+    for (int i = 0; i < 2; ++i) {
+        delete players[i];
+    }
 }
 
 int main() {
