@@ -5,8 +5,10 @@
 #include "Game_3.h"
 #include "Game4.h"
 #include "Game_6.h"
+#include "Game_7.h"
 #include "Game_8.h"
 #include "Game_9.h"
+
 
 
 using namespace std;
@@ -293,6 +295,74 @@ void misereTicTacToe() {
     system("pause");
 }
 
+void fourbyfourTicTacToe(){
+  cout << "You selected fourbyfourTicTacToe\n";
+  int choice;
+    Player<char> *players[2];
+    Board4x4<char> *B = new Board4x4<char>();
+    string player1Name, player2Name;
+
+    cout << "Welcome to the Tic-Tac-Toe Game. :)\n";
+
+    // Set up player 1
+    cout << "Enter Player X name: ";
+    cin >> player1Name;
+    cout << "Choose Player X type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+        players[0] = new Player4x4<char>(player1Name, 'X');
+        break;
+    case 2:
+        players[0] = new RandomPlayer4x4<char>(player1Name, 'X');
+        break;
+    default:
+        cout << "Invalid choice for Player X. Exiting the game.\n";
+        return ;
+    }
+
+    // Set up player 2
+    cout << "Enter Player O name: ";
+    cin >> player2Name;
+    cout << "Choose Player O type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+        players[1] = new Player4x4<char>(player2Name, 'O');
+        break;
+    case 2:
+        players[1] = new RandomPlayer4x4<char>(player2Name, 'O');
+        break;
+    default:
+        cout << "Invalid choice for Player O. Exiting the game.\n";
+        return ;
+    }
+
+    players[0]->setBoard(B);
+    players[1]->setBoard(B);
+
+    GameManager<char> ticGame(B, players);
+    ticGame.run();
+
+    // Clean up
+    delete B;
+    for (int i = 0; i < 2; ++i)
+    {
+        delete players[i];
+    }
+
+}
+
+
+
 void ultimateTicTacToe() {
     cout << "You selected Ultimate Tic Tac Toe.\n";
     // player and board setup
@@ -437,6 +507,7 @@ int main() {
         cout << "4 - Word Tic-Tac-Toe\n";
         cout << "5 - Numerical Tic-Tac-Toe\n";
         cout << "6 - Misere Tic Tac Toe\n";
+        cout << "7 - 4 x 4 Tic-Tac-Toe\n";
         cout << "8 - Ultimate Tic Tac Toe\n";
         cout << "9 - SUS\n";
         cout << "0 - Exit\n";
@@ -464,6 +535,9 @@ int main() {
             case 6:
                 misereTicTacToe();
                 break;
+            case 7:
+                fourbyfourTicTacToe();
+                break;
             case 8:
                 ultimateTicTacToe();
                 break;
@@ -471,7 +545,7 @@ int main() {
                 susGame();
                 break;
             case 0:
-                cout << "Exiting the program. Goodbye!\n";
+                cout << "Exiting the program\n";
                 break;
             default:
                 cout << "Invalid choice. Please try again.\n";
