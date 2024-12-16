@@ -2,8 +2,13 @@
 #include <bits/stdc++.h>
 #include "Game_2.h"
 
+
 int main() {
+    cout << "Welcome to Four-in-a-Row!\n";
+    cout << "The first player uses 'X', and the second player uses 'O'.\n\n";
+
     FourInARowBoard<char> board;
+
     HumanPlayer<char> player1("Player 1", 'X');
     HumanPlayer<char> player2("Player 2", 'O');
 
