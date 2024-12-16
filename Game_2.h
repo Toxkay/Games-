@@ -1,185 +1,185 @@
 #pragma once
 #include "BoardGame_Classes.h"
 #include <bits\stdc++.h>
-
 using namespace std;
 
-
+// ------------------- Board Class -------------------
 template <typename T>
-class ConnectFourBoard {
-private:
-    vector<vector<T>> board;
-    int rows = 6;
-    int cols = 7;
-    bool is_valid_move(int col);
-    bool check_win();
-    bool check_vertical();
-    bool check_horizontal();
-    bool check_diagonal();
+class Board {
+protected:
+    int rows, columns;
+    T** board;
+    int n_moves = 0;
 
 public:
-    ConnectFourBoard();
-    void print_board();
-    bool drop_piece(int col, T symbol);
-    bool game_over();
-    bool is_draw();
-    bool is_win();
+    Board(int rows, int columns) : rows(rows), columns(columns) {
+        board = new T*[rows];
+        for (int i = 0; i < rows; ++i) {
+            board[i] = new T[columns];
+            fill(board[i], board[i] + columns, ' ');
+        }
+    }
+
+    virtual ~Board() {
+        for (int i = 0; i < rows; ++i) {
+            delete[] board[i];
+        }
+        delete[] board;
+    }
+
+    virtual bool update_board(int x, int y, T symbol) = 0;
+    virtual void display_board() = 0;
+    virtual bool is_win() = 0;
+    virtual bool is_draw() = 0;
+    virtual bool game_is_over() = 0;
 };
 
-
+// ------------------- FourInARowBoard Class -------------------
 template <typename T>
-ConnectFourBoard<T>::ConnectFourBoard() {
-    board.resize(rows, vector<T>(cols, ' ')); 
-}
+class FourInARowBoard : public Board<T> {
+public:
+    FourInARowBoard() : Board<T>(6, 7) {}
 
-template <typename T>
-void ConnectFourBoard<T>::print_board() {
-    cout << endl;
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            cout << "| " << board[i][j] << " ";
+    bool update_board(int x, int y, T symbol) override {
+        if (y < 0 || y >= this->columns || x != 0) {
+            return false; // Invalid move
         }
-        cout << "|" << endl;
+        for (int i = this->rows - 1; i >= 0; --i) {
+            if (this->board[i][y] == ' ') {
+                this->board[i][y] = symbol;
+                this->n_moves++;
+                return true;
+            }
+        }
+        return false; 
     }
-    cout << "-----------------------------" << endl;
-}
 
-template <typename T>
-bool ConnectFourBoard<T>::is_valid_move(int col) {
-    return (col >= 0 && col < cols && board[0][col] == ' ');
-}
+    void display_board() override {
+        for (int i = 0; i < this->rows; ++i) {
+            for (int j = 0; j < this->columns; ++j) {
+                cout << "|" << this->board[i][j];
+            }
+            cout << "|\n";
+        }
+        cout << string(this->columns * 2 + 1, '-') << endl;
+    }
 
-template <typename T>
-bool ConnectFourBoard<T>::drop_piece(int col, T symbol) {
-    if (!is_valid_move(col)) {
+    bool is_win() override {
+        // Check horizontal
+        for (int i = 0; i < this->rows; ++i) {
+            for (int j = 0; j <= this->columns - 4; ++j) {
+                if (check_four_in_a_row(this->board[i][j], this->board[i][j + 1],
+                                        this->board[i][j + 2], this->board[i][j + 3])) {
+                    return true;
+                }
+            }
+        }
+        // Check vertical
+        for (int i = 0; i <= this->rows - 4; ++i) {
+            for (int j = 0; j < this->columns; ++j) {
+                if (check_four_in_a_row(this->board[i][j], this->board[i + 1][j],
+                                        this->board[i + 2][j], this->board[i + 3][j])) {
+                    return true;
+                }
+            }
+        }
+        // Check diagonals
+        for (int i = 0; i <= this->rows - 4; ++i) {
+            for (int j = 0; j <= this->columns - 4; ++j) {
+                if (check_four_in_a_row(this->board[i][j], this->board[i + 1][j + 1],
+                                        this->board[i + 2][j + 2], this->board[i + 3][j + 3])) {
+                    return true;
+                }
+            }
+            for (int j = 3; j < this->columns; ++j) {
+                if (check_four_in_a_row(this->board[i][j], this->board[i + 1][j - 1],
+                                        this->board[i + 2][j - 2], this->board[i + 3][j - 3])) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
-    for (int row = rows - 1; row >= 0; row--) {
-        if (board[row][col] == ' ') {
-            board[row][col] = symbol;
-            break;
-        }
+    bool is_draw() override {
+        return this->n_moves == this->rows * this->columns;
     }
-    return true;
-}
 
-template <typename T>
-bool ConnectFourBoard<T>::check_win() {
-    return check_vertical() || check_horizontal() || check_diagonal();
-}
-
-template <typename T>
-bool ConnectFourBoard<T>::check_vertical() {
-    for (int col = 0; col < cols; col++) {
-        for (int row = 0; row < rows - 3; row++) {
-            if (board[row][col] != ' ' && board[row][col] == board[row + 1][col] && board[row][col] == board[row + 2][col] && board[row][col] == board[row + 3][col]) {
-                return true;
-            }
-        }
+    bool game_is_over() override {
+        return is_win() || is_draw();
     }
-    return false;
-}
 
-template <typename T>
-bool ConnectFourBoard<T>::check_horizontal() {
-    for (int row = 0; row < rows; row++) {
-        for (int col = 0; col < cols - 3; col++) {
-            if (board[row][col] != ' ' && board[row][col] == board[row][col + 1] && board[row][col] == board[row][col + 2] && board[row][col] == board[row][col + 3]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-template <typename T>
-bool ConnectFourBoard<T>::check_diagonal() {
-    for (int row = 0; row < rows - 3; row++) {
-        for (int col = 0; col < cols - 3; col++) {
-            if (board[row][col] != ' ' && board[row][col] == board[row + 1][col + 1] && board[row][col] == board[row + 2][col + 2] && board[row][col] == board[row + 3][col + 3]) {
-                return true;
-            }
-        }
-        for (int col = 3; col < cols; col++) {
-            if (board[row][col] != ' ' && board[row][col] == board[row + 1][col - 1] && board[row][col] == board[row + 2][col - 2] && board[row][col] == board[row + 3][col - 3]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-template <typename T>
-bool ConnectFourBoard<T>::is_draw() {
-    for (int col = 0; col < cols; col++) {
-        if (board[0][col] == ' ') {
-            return false;
-        }
-    }
-    return !check_win();
-}
-
-template <typename T>
-bool ConnectFourBoard<T>::game_over() {
-    return is_win() || is_draw();
-}
-
-template <typename T>
-bool ConnectFourBoard<T>::is_win() {
-    return check_win();
-}
-
-template <typename T>
-class ConnectFourPlayer {
 private:
+    bool check_four_in_a_row(T a, T b, T c, T d) {
+        return a == b && b == c && c == d && a != ' ';
+    }
+};
+
+// ------------------- Player Class -------------------
+template <typename T>
+class Player {
+protected:
     string name;
     T symbol;
+    Board<T>* boardPtr;
 
 public:
-    ConnectFourPlayer(string player_name, T player_symbol);
-    void make_move(ConnectFourBoard<T>& board, int col);
-    string get_name();
-    T get_symbol();
+    Player(string n, T symbol) : name(n), symbol(symbol), boardPtr(nullptr) {}
+    T getsymbol() { return symbol; }
+    string getname() { return name; }
+    void setBoard(Board<T>* b) { boardPtr = b; }
+    virtual void getmove(int& x, int& y) = 0;
 };
 
+// ------------------- HumanPlayer Class -------------------
 template <typename T>
-ConnectFourPlayer<T>::ConnectFourPlayer(string player_name, T player_symbol) : name(player_name), symbol(player_symbol) {}
-
-template <typename T>
-void ConnectFourPlayer<T>::make_move(ConnectFourBoard<T>& board, int col) {
-    if (board.drop_piece(col, symbol)) {
-        cout << name << " placed " << symbol << " in column " << col << endl;
-    } else {
-        cout << "Column " << col << " is full. Try again!" << endl;
+class HumanPlayer : public Player<T> {
+public:
+    HumanPlayer(string n, T symbol) : Player<T>(n, symbol) {}
+    void getmove(int& x, int& y) override {
+        cout << this->name << " (" << this->symbol << "), enter a column (1-7): ";
+        cin >> y;
+        x = 0; // Only column input is needed
+        y--;   // Convert to 0-based indexing
     }
-}
-
-template <typename T>
-string ConnectFourPlayer<T>::get_name() {
-    return name;
-}
-
-template <typename T>
-T ConnectFourPlayer<T>::get_symbol() {
-    return symbol;
-}
-
-template <typename T>
-class RandomConnectFourPlayer : public ConnectFourPlayer<T> {
-public:
-    RandomConnectFourPlayer(string player_name, T player_symbol);
-    void make_move(ConnectFourBoard<T>& board);
 };
-template <typename T>
-RandomConnectFourPlayer<T>::RandomConnectFourPlayer(string player_name, T player_symbol) : ConnectFourPlayer<T>(player_name, player_symbol) {}
 
+// ------------------- GameManager Class -------------------
 template <typename T>
-void RandomConnectFourPlayer<T>::make_move(ConnectFourBoard<T>& board) {
-    srand(time(0));
-    int col;
-    do {
-        col = rand() % 7; 
-    } while (!board.drop_piece(col, get_symbol()));
-    cout << "Random player placed " << get_symbol() << " in column " << col << endl;
-}
+class GameManager {
+private:
+    Board<T>* boardPtr;
+    Player<T>* players[2];
+
+public:
+    GameManager(Board<T>* bPtr, Player<T>* playerPtr[2]) : boardPtr(bPtr) {
+        players[0] = playerPtr[0];
+        players[1] = playerPtr[1];
+    }
+
+    void run() {
+        int x, y;
+        boardPtr->display_board();
+
+        while (!boardPtr->game_is_over()) {
+            for (int i : {0, 1}) {
+                players[i]->getmove(x, y);
+                while (!boardPtr->update_board(x, y, players[i]->getsymbol())) {
+                    cout << "Invalid move. Try again.\n";
+                    players[i]->getmove(x, y);
+                }
+                boardPtr->display_board();
+                if (boardPtr->is_win()) {
+                    cout << players[i]->getname() << " wins!\n";
+                    return;
+                }
+                if (boardPtr->is_draw()) {
+                    cout << "It's a draw!\n";
+                    return;
+                }
+            }
+        }
+    }
+};
+
+
